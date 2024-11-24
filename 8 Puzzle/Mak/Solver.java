@@ -1,12 +1,11 @@
 package Mak;
 
 
+import Mak.Tree.Tree;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class Solver {
 
@@ -26,31 +25,31 @@ public class Solver {
     }
 
     private void goAlgorithm(Board goboard) {
-        pq.insert(goboard);
 
-        List<Board> hasBoard = new ArrayList<>();
+        Tree<Board> headTree = new Tree<>(goboard);  // 树头
+        Tree<Board> pTree = headTree;  // 游动的
 
         Board headboard = goboard;
 
+
         while (!headboard.isGoal()) {
-            hasBoard.add(pq.delMin());
+
             for (Board b : headboard.neighbors()) {
-                boolean flag = true;
-                for (int i = 0; i < hasBoard.size(); i++) {
-                    if (b.equals(hasBoard.get(i)))
-                        flag = false;
-                }
-                if (!flag)
+                if (Tree.hasEqual(b, headTree))
                     continue;
 
+                pTree.insert(b);
                 b.hasMove++;
                 pq.insert(b);
             }
+
             if (pq.isEmpty()) {
                 this.isSolvable = false;
                 return;
             }
-            headboard = pq.min();
+
+            headboard = pq.delMin();
+            pTree = Tree.reTree(headboard, headTree);
         }
         minmove = headboard.hasMove;
         this.isSolvable = true;
@@ -87,6 +86,8 @@ public class Solver {
         Solver solver = new Solver(initial);
 
         System.out.println(solver.isSolvable());
+        if (solver.isSolvable())
+            System.out.println(solver.moves());
     }
 
 }
