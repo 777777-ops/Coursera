@@ -2,12 +2,18 @@
   <library name="algs4">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/.lift/algs4.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../library-sp24" />
+      <root url="file://$PROJECT_DIR$/../Priority Queues" />
     </CLASSES>
     <JAVADOC>
       <root url="https://algs4.cs.princeton.edu/code/javadoc" />
     </JAVADOC>
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/.lift/algs4.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../library-sp24" />
+      <root url="file://$PROJECT_DIR$/../Priority Queues/src" />
     </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../../library-sp24" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../../../library-sp24" recursive="false" type="SOURCES" />
   </library>
 </component>
