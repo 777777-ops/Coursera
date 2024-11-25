@@ -11,12 +11,16 @@ public class Board {
 
     private int[][] tiles;
     public int hasMove = 0;
+    public int hamming;
+    public int manhattan;
 
 
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
         this.tiles = tiles;
+        this.hamming = this.hamming();
+        this.manhattan = this.manhattan();
     }
 
 
@@ -94,25 +98,29 @@ public class Board {
                 }
 
         if (row > 0) {
-            boardList.add(twin(row, column, row - 1, column));
+            boardList.add(exch(row, column, row - 1, column));
         }
         if (row < this.dimension() - 1) {
-            boardList.add(twin(row, column, row + 1, column));
+            boardList.add(exch(row, column, row + 1, column));
         }
         if (column > 0) {
-            boardList.add(twin(row, column, row, column - 1));
+            boardList.add(exch(row, column, row, column - 1));
         }
         if (column < this.dimension() - 1) {
-            boardList.add(twin(row, column, row, column + 1));
+            boardList.add(exch(row, column, row, column + 1));
         }
 
         boardList.iterator();  // 实现接口
+
+        for (Board board : boardList) {
+            board.hasMove = this.hasMove + 1;
+        }
 
         return boardList;
     }
 
     // a board that is obtained by exchanging any pair of tiles
-    public Board twin(int row, int column, int exrow, int excolumn) {
+    public Board exch(int row, int column, int exrow, int excolumn) {
 
 
         int[][] newtiles = new int[this.tiles.length][this.tiles.length];
@@ -150,7 +158,7 @@ public class Board {
     // unit testing (not graded)
     public static void main(String[] args) {
 
-        String filename = "puzzle01.txt";
+        String filename = "puzzle3x3-22.txt";
 
         // read in the board specified in the filename
         In in = new In(filename);
@@ -164,8 +172,7 @@ public class Board {
 
         Board board = new Board(tiles);
         // board.neighbors();
-        for (Board b : board.neighbors())
-            System.out.println(b);
+        System.out.println(board.manhattan);
 
 
     }
