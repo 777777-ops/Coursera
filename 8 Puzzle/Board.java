@@ -1,5 +1,3 @@
-package Mak;
-
 // 学会throw错误
 
 import edu.princeton.cs.algs4.In;
@@ -10,9 +8,8 @@ import java.util.List;
 public class Board {
 
     private int[][] tiles;
-    public int hasMove = 0;
-    public int hamming;
-    public int manhattan;
+    private int hamming = -1;
+    private int manhattan = -1;
 
 
     // create a board from an n-by-n array of tiles,
@@ -42,18 +39,23 @@ public class Board {
 
     // number of tiles out of place
     public int hamming() {
+        if (hamming != -1)
+            return hamming;
         int sum = 0;
         for (int i = 0; i < this.tiles.length; i++)
             for (int j = 0; j < this.tiles[i].length; j++)
-                if (this.tiles[i][j] != i * this.dimension() + j + 1)
+                if (this.tiles[i][j] == 0)
+                    continue;
+                else if (this.tiles[i][j] != i * this.dimension() + j + 1)
                     sum++;
-        if (this.tiles[this.dimension() - 1][this.dimension() - 1] == 0)
-            sum--;
+
         return sum;
     }
 
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
+        if (manhattan != -1)
+            return manhattan;
         int sum = 0;
         for (int i = 0; i < this.tiles.length; i++)
             for (int j = 0; j < this.tiles[i].length; j++) {
@@ -73,7 +75,12 @@ public class Board {
     // does this board equal y?
     public boolean equals(Object y) {
         Board yy;
-        yy = (Board) y;
+        if (y.getClass().equals(this.getClass()))
+            yy = (Board) y;
+        else
+            return false;
+        if (this.dimension() != yy.dimension())
+            return false;
 
 
         for (int i = 0; i < this.tiles.length; i++)
@@ -112,15 +119,15 @@ public class Board {
 
         boardList.iterator();  // 实现接口
 
-        for (Board board : boardList) {
-            board.hasMove = this.hasMove + 1;
-        }
-
         return boardList;
     }
 
     // a board that is obtained by exchanging any pair of tiles
-    public Board exch(int row, int column, int exrow, int excolumn) {
+    public Board twin() {
+        return this;
+    }
+
+    private Board exch(int row, int column, int exrow, int excolumn) {
 
 
         int[][] newtiles = new int[this.tiles.length][this.tiles.length];
@@ -151,10 +158,6 @@ public class Board {
     }
      */
 
-    public int[][] getTiles() {
-        return this.tiles;
-    }
-
     // unit testing (not graded)
     public static void main(String[] args) {
 
@@ -172,8 +175,10 @@ public class Board {
 
         Board board = new Board(tiles);
         // board.neighbors();
-        System.out.println(board.manhattan);
+        // System.out.println(board.getManhattan());
 
 
     }
+
+
 }
