@@ -1,0 +1,197 @@
+//邻接矩阵加深度
+import java.util.*;
+
+abstract class Graph<Key> {
+    //不适合使用Map
+    //private Map<Key,Integer> map=new HashMap<>();
+    protected List<Key> keyList=new ArrayList<>();
+
+    //邻接表  //也可以是邻接矩阵
+    protected List<Integer>[] adj;
+
+    protected int V;  //总点数
+
+    //带权实现
+    protected class Node{
+        int vertex;
+        int weight;
+
+    }
+
+    abstract public int getV();
+
+    abstract public int findIndex(Key key);
+
+    abstract public void addEdge(Key k1,Key k2);
+
+    abstract public Iterable<Key> neighbor(Key key);
+
+}
+class MGraph<Key> extends Graph<Key> {
+
+
+    //通过比顶点数Keys初始化
+    public MGraph(Key... keys){
+        this.V=keys.length;
+        adj= (List<Integer>[]) new ArrayList[V];
+        for (int v = 0; v < V; v++) {
+            adj[v] = new ArrayList<>();
+            for(int e=0 ; e<V ; e++) {adj[v].add(0);}
+            keyList.add(keys[v]);
+        }
+    }
+
+
+
+    @Override
+    public int getV() {
+        return this.V;
+    }
+
+    @Override
+    public int findIndex(Key key)
+    {
+        for (int i = 0; i < keyList.size(); i++) {
+            if(key==keyList.get(i))
+                return i;
+        }
+        return -1;
+    }
+
+    @Override
+    public void addEdge(Key k1, Key k2) {
+        int index1=findIndex(k1);
+        int index2=findIndex(k2);
+        adj[index1].set(index2,1);
+        adj[index2].set(index1,1);
+    }
+
+    @Override
+    public Iterable<Key> neighbor(Key key) {
+        List<Key> keyIterable=new ArrayList<>();
+        int index=findIndex(key);
+        for (int i = 0; i < V; i++) {
+            int f=adj[index].get(i);
+            if(f==1)
+                keyIterable.add(keyList.get(i));
+        }
+        return keyIterable;
+    }
+}
+class DepthFirstPaths<Key> {
+
+    private boolean[] marked;
+    private Stack<Key> stack;
+    private Key[] edgeTo;  //上一个所连接的节点
+    private Graph<Key> graph;
+    private Key head;
+
+    public DepthFirstPaths(Graph<Key> initgraph,Key inithead){
+        this.graph=initgraph;
+        this.head=inithead;
+        this.marked=new boolean[graph.getV()];
+        this.stack=new Stack<>();
+        this.edgeTo=(Key[])new Object[graph.getV()];
+        Arrays.fill(this.edgeTo, null);
+
+
+        dfp();
+    }
+
+    private void dfp(){
+
+        stack.add(head);
+        marked[graph.findIndex(head)]=true;
+
+        Key key=head;
+        System.out.print(key+" ");
+        //int index=graph.findIndex(key);
+        while(true){
+            //index=graph.findIndex(key);
+
+            Iterable<Key> iterable=graph.neighbor(key);
+            boolean isAllMarked=true;
+            for (Key neighborkey : iterable) {
+                int neighborkeyindex=graph.findIndex(neighborkey);
+                if(marked[neighborkeyindex])
+                    continue;
+
+                isAllMarked=false;
+                stack.add(neighborkey);
+                marked[neighborkeyindex]=true;
+                edgeTo[neighborkeyindex]=key;
+
+                key=neighborkey;
+                System.out.print(key+" ");
+
+                break;
+            }
+            if(isAllMarked){
+                stack.pop();  //pop出来的这个元素是没有用的 就是出度都已经marked过了
+                if(stack.isEmpty()) break;
+                key=stack.peek();
+
+            }
+
+        }
+    }
+
+
+
+    public Iterable<Key> isPath(Key key)
+    {
+        List<Key> path=new ArrayList<>();
+        path.add(key);
+        Key travel=key;
+        int index= graph.findIndex(travel);
+        while(edgeTo[index]!=null)
+        {
+            travel=edgeTo[index];
+            index= graph.findIndex(travel);
+            path.add(travel);
+        }
+
+
+        Collections.reverse(path);
+
+        return path;
+    }
+}
+public class Main{
+        public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int V=sc.nextInt();
+        int E=sc.nextInt();
+
+
+        Integer[] keys=new Integer[V];
+        for (int i = 0; i < V; i++) {
+            keys[i]=i;
+        }
+        MGraph<Integer> G=new MGraph<>(keys);
+
+        for (int i = 0; i < E; i++) {
+            G.addEdge(keys[sc.nextInt()],keys[sc.nextInt()]);
+        }
+
+
+
+
+        for (int i = 0; i < G.getV(); i++) {
+
+
+            for (int i1 = 0; i1 < G.getV(); i1++) {
+                if(i1==0){
+                    System.out.print(G.adj[i].get(i1));
+                    continue;
+                }
+                System.out.print(" "+G.adj[i].get(i1));
+            }
+            System.out.println();
+        }
+        System.out.println();
+
+
+        DepthFirstPaths<Integer> DFP=new DepthFirstPaths<>(G,keys[0]);
+    }
+}

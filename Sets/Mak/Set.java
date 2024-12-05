@@ -5,8 +5,9 @@ import java.util.List;
 
 public class Set<Key> {
 
+
     int[] parents=new int[100];
-    Key[] keyList=(Key[])new Object[100];
+    Key[] keyList=(Key[])new Object[100];  //key值和parents的映射表
     public int size;
 
     public Set(){
@@ -18,7 +19,7 @@ public class Set<Key> {
     public void insertKey(Key key)
     {
         keyList[size]=key;
-        parents[size]=-1;
+        parents[size]=-1;   //-1代表该集合的大小为1
         size++;
     }
 
@@ -27,7 +28,7 @@ public class Set<Key> {
         if(parents[index]<0)
             return index;
         else {
-            parents[index] = findRoot(parents[index]);
+            parents[index] = findRoot(parents[index]);  //路径压缩 ，尽量使每个节点都直接指向根据点
             return parents[index] ;
         }
     }
@@ -47,10 +48,10 @@ public class Set<Key> {
             int qRoot=findRoot(findKeyIndex(q));
             //q比较大
             if(parents[pRoot]>parents[qRoot]){
-                parents[qRoot]+=parents[pRoot];
+                parents[qRoot]+=parents[pRoot];     //对集合大小进行改变
                 parents[pRoot]=qRoot;
             }else{
-                parents[pRoot]+=parents[qRoot];
+                parents[pRoot]+=parents[qRoot];     //对集合大小进行改变
                 parents[qRoot]=pRoot;
             }
 
